@@ -46,6 +46,10 @@ class AttendeeController extends Controller
      */
     public function destroy(Event $event, Attendee $attendee)
     {
+        if (request()->user()->id !== $attendee->user_id) {
+            return response()->json(['message' => 'Forbidden'], 403);
+        }
+
         $attendee->delete();
 
         return response(status: 204);

@@ -30,13 +30,15 @@ class EventController extends Controller
      */
     public function store(Request $request)
     {
-        $event = Event::create($request->validate([
-            'user_id' => 'required|exists:users,id',
-            'name' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'start_time' => 'required|date',
-            'end_time' => 'required|date|after:start_time'
-        ]));
+        $event = Event::create([
+            ...$request->validate([
+                'name' => 'required|string|max:255',
+                'description' => 'nullable|string',
+                'start_time' => 'required|date',
+                'end_time' => 'required|date|after:start_time'
+            ]),
+            'user_id' => $request->user()->id
+        ]);
 
         return new EventResource($this->loadRelationship($event));
     }
@@ -54,6 +56,10 @@ class EventController extends Controller
      */
     public function update(Request $request, Event $event)
     {
+        if ($request->user()->id !== $event->user_id) {
+            return response()->json(['message' => 'Forbidden'], 403);
+        }
+
         $event->update($request->validate([
             'name' => 'sometimes|string|max:255',
             'description' => 'nullable|string',
@@ -69,6 +75,10 @@ class EventController extends Controller
      */
     public function destroy(Event $event)
     {
+        if (request()->user()->id !== $event->user_id) {
+            return response()->json(['message' => 'Forbidden'], 403);
+        }
+
         $event->delete();
 
         return response(status: 204);
