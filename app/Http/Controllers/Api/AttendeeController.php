@@ -8,10 +8,13 @@ use App\Http\Traits\CanLoadRelationships;
 use App\Models\Event;
 use App\Models\Attendee;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 
 class AttendeeController extends Controller
 {
     use CanLoadRelationships;
+
+    private array $relations = ['attendees', 'attendees.user'];
 
     /**
      * Display a listing of the resource.
@@ -46,9 +49,7 @@ class AttendeeController extends Controller
      */
     public function destroy(Event $event, Attendee $attendee)
     {
-        if (request()->user()->id !== $attendee->user_id) {
-            return response()->json(['message' => 'Forbidden'], 403);
-        }
+        Gate::authorize('delete-attendee', [$event, $attendee]);
 
         $attendee->delete();
 

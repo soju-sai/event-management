@@ -5,7 +5,6 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\EventController;
 use App\Http\Controllers\Api\AttendeeController;
 use App\Http\Controllers\Api\AuthController;
-use Illuminate\Auth\Events\Logout;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -20,7 +19,7 @@ Route::apiResource('events', EventController::class)
     ->middleware('auth:sanctum')
     ->except(['index', 'show']);
 Route::apiResource('events.attendees', AttendeeController::class)
-    ->only(['index', 'show']);
+    ->only(['index', 'show', 'update']);
 Route::apiResource('events.attendees', AttendeeController::class)
     ->scoped()
     ->middleware('auth:sanctum')
