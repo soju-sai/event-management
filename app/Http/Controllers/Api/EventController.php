@@ -8,6 +8,7 @@ use App\Http\Traits\CanLoadRelationships;
 use App\Models\Event;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Log;
 
 class EventController extends Controller
 {
@@ -17,7 +18,7 @@ class EventController extends Controller
 
     public function __construct()
     {
-        $this->authorizeResource(Event::class, 'event', ['except' => ['index', 'show']]);
+        $this->authorizeResource(Event::class, 'event', ['except' => ['index', 'show']]); // this is for policy based authorization
     }
 
     /**
@@ -66,11 +67,11 @@ class EventController extends Controller
         // if (Gate::denies('update-event', $event)) {
         //     abort(403, 'not authorized for this action!');
         // }
-        Gate::authorize('update-event', $event);
+        // Gate::authorize('update-event', $event);
 
-        if ($request->user()->id !== $event->user_id) {
-            return response()->json(['message' => 'Forbidden'], 403);
-        }
+        // if ($request->user()->id !== $event->user_id) {
+        //     return response()->json(['message' => 'Forbidden'], 403);
+        // }
 
         $event->update($request->validate([
             'name' => 'sometimes|string|max:255',
