@@ -15,11 +15,11 @@ class Event extends Model
 
     public function attendees(): HasMany
     {
-        return $this->hasMany(Attendee::class);
+        return $this->hasMany(Attendee::class, 'event_id');
     }
 
     public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'user_id');
     }
 }
