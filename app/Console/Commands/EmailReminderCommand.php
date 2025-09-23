@@ -33,11 +33,13 @@ class EmailReminderCommand extends Command
             ->whereBetween('start_time', [Carbon::now(), Carbon::now()->add(1, 'day')])
             ->get();
 
+        $this->info("Found {$events->count()} events");
         $events->each(
             fn($event) => $event->attendees->each(
                 fn($attendee) => $attendee->user->notify(new EventEmail($event))
                 // fn($attendee) => $this->info("Notifying the user {$attendee->user->id}")
             )
         );
+        $this->info("Notified users");
     }
 }
