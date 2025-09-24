@@ -19,6 +19,7 @@ class EventController extends Controller
     public function __construct()
     {
         $this->authorizeResource(Event::class, 'event', ['except' => ['index', 'show']]); // this is for policy based authorization
+        $this->middleware('throttle:60,1')->only(['store', 'update', 'destroy']);
     }
 
     /**
